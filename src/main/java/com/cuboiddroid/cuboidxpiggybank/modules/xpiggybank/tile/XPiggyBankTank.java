@@ -85,8 +85,6 @@ public class XPiggyBankTank implements IFluidHandler, IFluidTank {
     }
 
     public XPiggyBankTank readFromNBT(CompoundNBT nbt) {
-        // TODO - adjust to also store the selected output fluid type
-        // TODO - adjust to also store the tank capacity
         CompoundNBT fluidTag = nbt.getCompound("fluid");
         FluidStack fluid = FluidStack.loadFluidStackFromNBT(fluidTag);
 
@@ -100,8 +98,6 @@ public class XPiggyBankTank implements IFluidHandler, IFluidTank {
     }
 
     public CompoundNBT writeToNBT(CompoundNBT nbt) {
-        // TODO - adjust to also store the selected output fluid type
-        // TODO - adjust to also store the tank capacity
         CompoundNBT fluidTag = new CompoundNBT();
         fluid.writeToNBT(fluidTag);
 
@@ -264,7 +260,6 @@ public class XPiggyBankTank implements IFluidHandler, IFluidTank {
 
         int amount = outputToInternalAmount(stack.getAmount(), rate);
 
-        // TODO - use our own liquid XP for the internal storage
         this.fluid = new FluidStack(ModFluids.LIQUID_XP.get(), amount);
     }
 

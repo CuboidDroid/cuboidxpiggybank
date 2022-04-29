@@ -20,6 +20,7 @@
   "cuboidxpiggybank.container.xpiggybank.btn.retrieve_all": "Retrieve all levels",
   "cuboidxpiggybank.container.xpiggybank.btn.prev_fluid": "Previous fluid",
   "cuboidxpiggybank.container.xpiggybank.btn.next_fluid": "Next fluid",
+  "cuboidxpiggybank.container.xpiggybank.btn.toggle_pickup": "Toggle XP pickup",
   "item.cuboidxpiggybank.liquid_xp_bucket": "Liquid Experience Bucket",
   "fluid.cuboidxpiggybank.liquid_xp": "Liquid Experience"
 }

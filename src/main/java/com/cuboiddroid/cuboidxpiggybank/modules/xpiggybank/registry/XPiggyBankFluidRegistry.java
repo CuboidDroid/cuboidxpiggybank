@@ -70,14 +70,26 @@ public final class XPiggyBankFluidRegistry {
         return Lists.newArrayList(results);
     }
 
-    public void registerFluid(ResourceLocation fluidName, int rate) throws Exception {
+    public void registerFluid(ResourceLocation fluidName, int rate, XPiggyBankDirection direction) throws Exception {
         Fluid f = XPiggyBankHelpers.getFluid(fluidName);
 
-        fluidMap.put(f.getRegistryName(), new XPiggyBankFluid(f.getRegistryName(), rate));
+        fluidMap.put(f.getRegistryName(), new XPiggyBankFluid(f.getRegistryName(), rate, direction));
     }
 
-    public boolean isRegistered(ResourceLocation id) {
-        return fluidMap.containsKey(id);
+    public boolean isRegisteredForOutput(ResourceLocation id) {
+        if (!fluidMap.containsKey(id)) return false;
+
+        XPiggyBankFluid fluid = fluidMap.get(id);
+        return fluid.getDirection() == XPiggyBankDirection.BOTH
+                || fluid.getDirection() == XPiggyBankDirection.OUTPUT;
+    }
+
+    public boolean isRegisteredForInput(ResourceLocation id) {
+        if (!fluidMap.containsKey(id)) return false;
+
+        XPiggyBankFluid fluid = fluidMap.get(id);
+        return fluid.getDirection() == XPiggyBankDirection.BOTH
+                || fluid.getDirection() == XPiggyBankDirection.INPUT;
     }
 
     public static XPiggyBankFluidRegistry getInstance()
@@ -98,7 +110,7 @@ public final class XPiggyBankFluidRegistry {
         Stopwatch stopwatch = Stopwatch.createStarted();
 
         try {
-            registerFluid(ModFluids.LIQUID_XP.getId(), 1000);
+            registerFluid(ModFluids.LIQUID_XP.getId(), 1000, XPiggyBankDirection.BOTH);
         } catch (Exception exception) {
             XPiggyBankMod.LOGGER.error("Error registering Liquid Experience! This ain't gonna work!\n{}", exception);
         }
@@ -113,17 +125,31 @@ public final class XPiggyBankFluidRegistry {
             String[] typeAndRate = fluidTypeAndRate.split("=");
 
             if (typeAndRate.length != 2) {
-                XPiggyBankMod.LOGGER.warn("'{}' is an invalid fluid specification. Must be in 'mod:location=rate' format. e.g. 'industrialforegoing:essence=100'");
+                XPiggyBankMod.LOGGER.warn("'{}' is an invalid fluid specification. Must be in 'mod:location=rate:direction' format. e.g. 'industrialforegoing:essence=100:IO'");
             } else {
                 try {
-                    registerFluid(new ResourceLocation(typeAndRate[0]), Integer.parseInt(typeAndRate[1]));
+                    String[] rateAndDirection = typeAndRate[1].split(":");
+                    if (rateAndDirection.length != 2)
+                    {
+                        XPiggyBankMod.LOGGER.warn("'{}' is an invalid fluid specification. Must be in 'mod:location=rate:direction' format. e.g. 'industrialforegoing:essence=100:IO'");
+                    } else if (!(rateAndDirection[1].equalsIgnoreCase("IO") || rateAndDirection[1].equalsIgnoreCase("I") || rateAndDirection[1].equalsIgnoreCase("O"))) {
+                        XPiggyBankMod.LOGGER.warn("'{}' is an invalid fluid specification. Must be in 'mod:location=rate:direction' format and direction must be IO, I or O. e.g. 'industrialforegoing:essence=100:IO'");
+                    }
+
+                    XPiggyBankDirection dir = rateAndDirection[1].equalsIgnoreCase("IO")
+                            ? XPiggyBankDirection.BOTH
+                            : (
+                                    rateAndDirection[1].equalsIgnoreCase("I")
+                                    ? XPiggyBankDirection.INPUT
+                                    : XPiggyBankDirection.OUTPUT
+                              );
+
+                    registerFluid(new ResourceLocation(typeAndRate[0]), Integer.parseInt(rateAndDirection[0]), dir);
                 } catch (Exception exception) {
                     XPiggyBankMod.LOGGER.info("Error registering fluid '{}'.\n{}", fluidTypeAndRate, exception);
                 }
             }
         }
-
-        defaultFluidName = new ResourceLocation(Config.defaultFluidType.get());
 
         stopwatch.stop();
         XPiggyBankMod.LOGGER.info("Loaded {} Fluid Types.", fluidMap.size());

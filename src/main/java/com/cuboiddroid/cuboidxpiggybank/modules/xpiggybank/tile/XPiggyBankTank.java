@@ -35,7 +35,7 @@ public class XPiggyBankTank implements IFluidHandler, IFluidTank {
 
     private boolean fluidValidator(FluidStack fluidStack)
     {
-        return XPiggyBankFluidRegistry.getInstance().isRegistered(fluidStack.getFluid().getRegistryName());
+        return XPiggyBankFluidRegistry.getInstance().isRegisteredForInput(fluidStack.getFluid().getRegistryName());
     }
 
     public XPiggyBankTank setCapacity(int capacity)
@@ -238,9 +238,12 @@ public class XPiggyBankTank implements IFluidHandler, IFluidTank {
 
     public void setOutputFluid(FluidStack stack)
     {
-        this.outputFluid = stack;
-        this.outputFluidId = stack.getFluid().getRegistryName();
-        onContentsChanged();
+        ResourceLocation outputFluidId = stack.getFluid().getRegistryName();
+        if (XPiggyBankFluidRegistry.getInstance().isRegisteredForOutput(outputFluidId)) {
+            this.outputFluid = stack;
+            this.outputFluidId = outputFluidId;
+            onContentsChanged();
+        }
     }
 
     public ResourceLocation getOutputFluidId() {
@@ -248,7 +251,7 @@ public class XPiggyBankTank implements IFluidHandler, IFluidTank {
     }
 
     public void setOutputFluidId(ResourceLocation outputFluidId) {
-        if (XPiggyBankFluidRegistry.getInstance().isRegistered(outputFluidId)) {
+        if (XPiggyBankFluidRegistry.getInstance().isRegisteredForOutput(outputFluidId)) {
             this.outputFluidId = outputFluidId;
             this.outputFluid = new FluidStack(XPiggyBankHelpers.getFluid(outputFluidId), 1);
             onContentsChanged();

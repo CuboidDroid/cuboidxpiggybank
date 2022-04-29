@@ -15,7 +15,8 @@ public class XPiggyBankTileEntity extends XPiggyBankTileEntityBase {
     public XPiggyBankTileEntity() {
         super(ModTileEntities.XPIGGYBANK.get(),
                 Config.ticksPerCheck.get(),
-                Config.pickupRadius.get());
+                Config.pickupRadius.get(),
+                Config.pickupEnabled.get());
     }
 
     @Override

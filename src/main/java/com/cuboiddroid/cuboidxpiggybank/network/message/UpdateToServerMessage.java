@@ -30,7 +30,8 @@ public class UpdateToServerMessage {
         STORE,
         RETRIEVE,
         NEXT,
-        PREV
+        PREV,
+        ACTIVE
     }
 
     public UpdateToServerMessage(PacketBuffer buffer) {
@@ -56,7 +57,10 @@ public class UpdateToServerMessage {
             if (serverEntity instanceof XPiggyBankTileEntity) {
                 XPiggyBankTileEntity tile = (XPiggyBankTileEntity) serverEntity;
 
-                if (requestType == RequestType.NEXT) {
+                if (requestType == RequestType.ACTIVE) {
+                    tile.setPickupActive(xp != 0);
+                }
+                else if (requestType == RequestType.NEXT) {
                     // go to the next available fluid type
                     tile.nextOutputFluid();
                 }

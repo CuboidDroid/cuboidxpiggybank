@@ -77,6 +77,7 @@ public abstract class XPiggyBankBlockBase extends Block {
     public BlockState getStateForPlacement(BlockItemUseContext context) {
         return defaultBlockState()
                 .setValue(BlockStateProperties.LIT, false)
+                .setValue(BlockStateProperties.ENABLED, true)
                 .setValue(BlockStateProperties.HORIZONTAL_FACING, context.getHorizontalDirection().getOpposite());
     }
 
@@ -139,7 +140,7 @@ public abstract class XPiggyBankBlockBase extends Block {
 
     @Override
     protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.LIT);
+        builder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.LIT, BlockStateProperties.ENABLED);
     }
 
     private static final VoxelShape VOXEL_SHAPE = Stream.of(

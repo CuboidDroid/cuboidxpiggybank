@@ -1,5 +1,6 @@
 package com.cuboiddroid.cuboidxpiggybank.modules.xpiggybank.screen;
 
+import com.cuboiddroid.cuboidxpiggybank.Config;
 import com.cuboiddroid.cuboidxpiggybank.XPiggyBankMod;
 import com.cuboiddroid.cuboidxpiggybank.modules.xpiggybank.inventory.XPiggyBankContainerBase;
 import com.cuboiddroid.cuboidxpiggybank.modules.xpiggybank.tile.XPiggyBankTileEntityBase;
@@ -66,6 +67,9 @@ public class XPiggyBankScreenBase<T extends XPiggyBankContainerBase> extends Con
 
     @Override
     protected void renderLabels(MatrixStack matrix, int mouseX, int mouseY) {
+        assert this.minecraft != null;
+
+        /* disabled - "XPiggy Bank" is in the image now
         String[] words = this.name.getString().split("\\s+");
         String firstLine = words[0] + ((words.length > 1) ? " " + words[1] : "");
         StringBuilder secondLine = new StringBuilder();
@@ -75,9 +79,9 @@ public class XPiggyBankScreenBase<T extends XPiggyBankContainerBase> extends Con
         ITextComponent first = new StringTextComponent(firstLine);
         ITextComponent second = new StringTextComponent(secondLine.toString());
 
-        assert this.minecraft != null;
         this.minecraft.font.draw(matrix, first, (this.imageWidth - this.minecraft.font.width(firstLine)) / 2.0f, 6, 4210752);
         this.minecraft.font.draw(matrix, second, (this.imageWidth - this.minecraft.font.width(secondLine.toString())) / 2.0f, 18, 4210752);
+        */
 
         float leftColX = 12.0f;
         float rightColX = leftColX + 4 + 0.8f * Math.max(Math.max(Math.max(minecraft.font.width(levelsLabel), minecraft.font.width(mbLabel)), minecraft.font.width(availableLabel)), minecraft.font.width(capacityLabel));
@@ -143,6 +147,17 @@ public class XPiggyBankScreenBase<T extends XPiggyBankContainerBase> extends Con
         int relY = (this.height - this.imageHeight) / 2;
         this.blit(matrix, relX, relY, 0, 0, this.imageWidth, this.imageHeight);
 
+        // render active state
+        if (Config.pickupEnabled.get()) {
+            // border
+            this.blit(matrix, relX + 7, relY + 7, 216, 0, 20, 29);
+
+            if (tile.getPickupActive())
+                this.blit(matrix, relX + 9, relY + 9, 184, 0, 16, 25);
+            else
+                this.blit(matrix, relX + 9, relY + 9, 200, 0, 16, 25);
+        }
+
         // render tank contents
         FluidStack fluidStack = tile.getFluidStack();
         if (!fluidStack.isEmpty()) {
@@ -198,73 +213,84 @@ public class XPiggyBankScreenBase<T extends XPiggyBankContainerBase> extends Con
 
         Button store10 = this.addButton(new Button(relX + 95, relY + 43, 20, 19, new StringTextComponent(""),
                 (onPress) ->
-                    NetworkHandler.INSTANCE.sendToServer(new UpdateToServerMessage(this.tile.getBlockPos(), 10, UpdateToServerMessage.RequestType.STORE)),
+                        NetworkHandler.INSTANCE.sendToServer(new UpdateToServerMessage(this.tile.getBlockPos(), 10, UpdateToServerMessage.RequestType.STORE)),
                 (button, matrix, mouseX, mouseY) ->
-                    renderTooltip(matrix, new TranslationTextComponent("cuboidxpiggybank.container.xpiggybank.btn.store_10"), mouseX, mouseY)
-                ));
+                        renderTooltip(matrix, new TranslationTextComponent("cuboidxpiggybank.container.xpiggybank.btn.store_10"), mouseX, mouseY)
+        ));
 
         Button store100 = this.addButton(new Button(relX + 95, relY + 64, 20, 19, new StringTextComponent(""),
                 (onPress) ->
-                    NetworkHandler.INSTANCE.sendToServer(new UpdateToServerMessage(this.tile.getBlockPos(), 100, UpdateToServerMessage.RequestType.STORE)),
+                        NetworkHandler.INSTANCE.sendToServer(new UpdateToServerMessage(this.tile.getBlockPos(), 100, UpdateToServerMessage.RequestType.STORE)),
                 (button, matrix, mouseX, mouseY) ->
-                    renderTooltip(matrix, new TranslationTextComponent("cuboidxpiggybank.container.xpiggybank.btn.store_100"), mouseX, mouseY)
-                ));
+                        renderTooltip(matrix, new TranslationTextComponent("cuboidxpiggybank.container.xpiggybank.btn.store_100"), mouseX, mouseY)
+        ));
 
         Button store1000 = this.addButton(new Button(relX + 95, relY + 85, 20, 19, new StringTextComponent(""),
                 (onPress) ->
-                    NetworkHandler.INSTANCE.sendToServer(new UpdateToServerMessage(this.tile.getBlockPos(), 1000, UpdateToServerMessage.RequestType.STORE)),
+                        NetworkHandler.INSTANCE.sendToServer(new UpdateToServerMessage(this.tile.getBlockPos(), 1000, UpdateToServerMessage.RequestType.STORE)),
                 (button, matrix, mouseX, mouseY) ->
-                    renderTooltip(matrix, new TranslationTextComponent("cuboidxpiggybank.container.xpiggybank.btn.store_1000"), mouseX, mouseY)
-                ));
+                        renderTooltip(matrix, new TranslationTextComponent("cuboidxpiggybank.container.xpiggybank.btn.store_1000"), mouseX, mouseY)
+        ));
 
         Button storeAll = this.addButton(new Button(relX + 95, relY + 106, 20, 19, new StringTextComponent(""),
                 (onPress) ->
-                    NetworkHandler.INSTANCE.sendToServer(new UpdateToServerMessage(this.tile.getBlockPos(), 0, UpdateToServerMessage.RequestType.STORE)),
+                        NetworkHandler.INSTANCE.sendToServer(new UpdateToServerMessage(this.tile.getBlockPos(), 0, UpdateToServerMessage.RequestType.STORE)),
                 (button, matrix, mouseX, mouseY) ->
-                    renderTooltip(matrix, new TranslationTextComponent("cuboidxpiggybank.container.xpiggybank.btn.store_all"), mouseX, mouseY)
-                ));
+                        renderTooltip(matrix, new TranslationTextComponent("cuboidxpiggybank.container.xpiggybank.btn.store_all"), mouseX, mouseY)
+        ));
 
         Button retrieve10 = this.addButton(new Button(relX + 34, relY + 43, 20, 19, new StringTextComponent(""),
                 (onPress) ->
-                    NetworkHandler.INSTANCE.sendToServer(new UpdateToServerMessage(this.tile.getBlockPos(), 10, UpdateToServerMessage.RequestType.RETRIEVE)),
+                        NetworkHandler.INSTANCE.sendToServer(new UpdateToServerMessage(this.tile.getBlockPos(), 10, UpdateToServerMessage.RequestType.RETRIEVE)),
                 (button, matrix, mouseX, mouseY) ->
-                    renderTooltip(matrix, new TranslationTextComponent("cuboidxpiggybank.container.xpiggybank.btn.retrieve_10"), mouseX, mouseY)
-                ));
+                        renderTooltip(matrix, new TranslationTextComponent("cuboidxpiggybank.container.xpiggybank.btn.retrieve_10"), mouseX, mouseY)
+        ));
 
         Button retrieve100 = this.addButton(new Button(relX + 34, relY + 64, 20, 19, new StringTextComponent(""),
                 (onPress) ->
-                    NetworkHandler.INSTANCE.sendToServer(new UpdateToServerMessage(this.tile.getBlockPos(), 100, UpdateToServerMessage.RequestType.RETRIEVE)),
+                        NetworkHandler.INSTANCE.sendToServer(new UpdateToServerMessage(this.tile.getBlockPos(), 100, UpdateToServerMessage.RequestType.RETRIEVE)),
                 (button, matrix, mouseX, mouseY) ->
-                    renderTooltip(matrix, new TranslationTextComponent("cuboidxpiggybank.container.xpiggybank.btn.retrieve_100"), mouseX, mouseY)
-                ));
+                        renderTooltip(matrix, new TranslationTextComponent("cuboidxpiggybank.container.xpiggybank.btn.retrieve_100"), mouseX, mouseY)
+        ));
 
         Button retrieve1000 = this.addButton(new Button(relX + 34, relY + 85, 20, 19, new StringTextComponent(""),
                 (onPress) ->
-                    NetworkHandler.INSTANCE.sendToServer(new UpdateToServerMessage(this.tile.getBlockPos(), 1000, UpdateToServerMessage.RequestType.RETRIEVE)),
+                        NetworkHandler.INSTANCE.sendToServer(new UpdateToServerMessage(this.tile.getBlockPos(), 1000, UpdateToServerMessage.RequestType.RETRIEVE)),
                 (button, matrix, mouseX, mouseY) ->
-                    renderTooltip(matrix, new TranslationTextComponent("cuboidxpiggybank.container.xpiggybank.btn.retrieve_1000"), mouseX, mouseY)
-                ));
+                        renderTooltip(matrix, new TranslationTextComponent("cuboidxpiggybank.container.xpiggybank.btn.retrieve_1000"), mouseX, mouseY)
+        ));
 
         Button retrieveAll = this.addButton(new Button(relX + 34, relY + 106, 20, 19, new StringTextComponent(""),
                 (onPress) ->
-                    NetworkHandler.INSTANCE.sendToServer(new UpdateToServerMessage(this.tile.getBlockPos(), 0, UpdateToServerMessage.RequestType.RETRIEVE)),
+                        NetworkHandler.INSTANCE.sendToServer(new UpdateToServerMessage(this.tile.getBlockPos(), 0, UpdateToServerMessage.RequestType.RETRIEVE)),
                 (button, matrix, mouseX, mouseY) ->
-                    renderTooltip(matrix, new TranslationTextComponent("cuboidxpiggybank.container.xpiggybank.btn.retrieve_all"), mouseX, mouseY)
-                ));
+                        renderTooltip(matrix, new TranslationTextComponent("cuboidxpiggybank.container.xpiggybank.btn.retrieve_all"), mouseX, mouseY)
+        ));
 
         Button prevFluid = this.addButton(new Button(relX + 127, relY + 23, 20, 19, new StringTextComponent(""),
                 (onPress) ->
-                    NetworkHandler.INSTANCE.sendToServer(new UpdateToServerMessage(this.tile.getBlockPos(), 0, UpdateToServerMessage.RequestType.PREV)),
+                        NetworkHandler.INSTANCE.sendToServer(new UpdateToServerMessage(this.tile.getBlockPos(), 0, UpdateToServerMessage.RequestType.PREV)),
                 (button, matrix, mouseX, mouseY) ->
-                    renderTooltip(matrix, new TranslationTextComponent("cuboidxpiggybank.container.xpiggybank.btn.prev_fluid"), mouseX, mouseY)
-                ));
+                        renderTooltip(matrix, new TranslationTextComponent("cuboidxpiggybank.container.xpiggybank.btn.prev_fluid"), mouseX, mouseY)
+        ));
 
         Button nextFluid = this.addButton(new Button(relX + 147, relY + 23, 20, 19, new StringTextComponent(""),
                 (onPress) ->
-                    NetworkHandler.INSTANCE.sendToServer(new UpdateToServerMessage(this.tile.getBlockPos(), 0, UpdateToServerMessage.RequestType.NEXT)),
+                        NetworkHandler.INSTANCE.sendToServer(new UpdateToServerMessage(this.tile.getBlockPos(), 0, UpdateToServerMessage.RequestType.NEXT)),
                 (button, matrix, mouseX, mouseY) ->
-                    renderTooltip(matrix, new TranslationTextComponent("cuboidxpiggybank.container.xpiggybank.btn.next_fluid"), mouseX, mouseY)
-                ));
+                        renderTooltip(matrix, new TranslationTextComponent("cuboidxpiggybank.container.xpiggybank.btn.next_fluid"), mouseX, mouseY)
+        ));
+
+        if (Config.pickupEnabled.get()) {
+            Button togglePickupActive = this.addButton(new Button(relX + 9, relY + 9, 16, 25, new StringTextComponent(""),
+                    (onPress) ->
+                            NetworkHandler.INSTANCE.sendToServer(new UpdateToServerMessage(this.tile.getBlockPos(), this.tile.getPickupActive() ? 0 : 1, UpdateToServerMessage.RequestType.ACTIVE)),
+                    (button, matrix, mouseX, mouseY) ->
+                            renderTooltip(matrix, new TranslationTextComponent("cuboidxpiggybank.container.xpiggybank.btn.toggle_pickup"), mouseX, mouseY)
+            ));
+
+            togglePickupActive.setAlpha(0);
+        }
 
         // hide the buttons from being rendered vanilla style...
         store10.setAlpha(0);

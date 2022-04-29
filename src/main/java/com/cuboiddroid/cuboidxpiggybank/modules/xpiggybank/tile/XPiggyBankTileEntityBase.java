@@ -1,6 +1,7 @@
 package com.cuboiddroid.cuboidxpiggybank.modules.xpiggybank.tile;
 
 import com.cuboiddroid.cuboidxpiggybank.Config;
+import com.cuboiddroid.cuboidxpiggybank.modules.xpiggybank.registry.XPiggyBankDirection;
 import com.cuboiddroid.cuboidxpiggybank.modules.xpiggybank.registry.XPiggyBankFluidRegistry;
 import com.cuboiddroid.cuboidxpiggybank.modules.xpiggybank.registry.XPiggyBankFluid;
 import com.cuboiddroid.cuboidxpiggybank.setup.ModFluids;
@@ -38,6 +39,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class XPiggyBankTileEntityBase extends TileEntity implements ITickableTileEntity {
@@ -45,19 +47,24 @@ public abstract class XPiggyBankTileEntityBase extends TileEntity implements ITi
     public XPiggyBankTileEntityBase(
             TileEntityType<?> tileEntityType,
             int ticksPerCheck,
-            int pickupRadius) {
+            int pickupRadius,
+            boolean pickupEnabled) {
         super(tileEntityType);
 
         this.ticksPerCheck = ticksPerCheck;
         this.pickupRadius = pickupRadius;
         this.pickupHeight = Math.min(pickupRadius, 2);
+        this.pickupEnabled = pickupEnabled;
+        this.pickupActive = true;
     }
 
     protected XPiggyBankTank tank = xpiggyBankTank();
     private final LazyOptional<IFluidHandler> handler = LazyOptional.of(() -> tank);
-    private final int ticksPerCheck;
-    private final int pickupRadius;
-    private final int pickupHeight;
+    private int ticksPerCheck;
+    private int pickupRadius;
+    private int pickupHeight;
+    private boolean pickupEnabled;
+    private boolean pickupActive;
     private int ticker = 0;
 
     private XPiggyBankTank xpiggyBankTank() {
@@ -90,37 +97,38 @@ public abstract class XPiggyBankTileEntityBase extends TileEntity implements ITi
         if (level == null || level.isClientSide)
             return;
 
-        ticker++;
-        if (ticker < ticksPerCheck)
-            return;
+        if (this.pickupEnabled && pickupActive) {
+            ticker++;
+            if (ticker < ticksPerCheck)
+                return;
 
-        ticker = 0;
+            ticker = 0;
 
-        BlockPos cubePos = getBlockPos().immutable();
-        TileEntity tile = level.getBlockEntity(cubePos);
+            BlockPos cubePos = getBlockPos().immutable();
+            TileEntity tile = level.getBlockEntity(cubePos);
 
-        if (!(tile instanceof XPiggyBankTileEntityBase))
-            return;
+            if (!(tile instanceof XPiggyBankTileEntityBase))
+                return;
 
-        XPiggyBankTileEntityBase cubeTileEntity = (XPiggyBankTileEntityBase) tile;
+            XPiggyBankTileEntityBase cubeTileEntity = (XPiggyBankTileEntityBase) tile;
 
-        AxisAlignedBB pickupArea = new AxisAlignedBB(
-                cubePos.getX() - (double)pickupRadius - 0.5d,
-                cubePos.getY() - (double)pickupHeight - 0.5d,
-                cubePos.getZ() - (double)pickupRadius - 0.5d,
-                cubePos.getX() + (double)pickupRadius + 0.5d,
-                cubePos.getY() + (double)pickupHeight + 0.5d,
-                cubePos.getZ() + (double)pickupRadius + 0.5d
-        );
+            AxisAlignedBB pickupArea = new AxisAlignedBB(
+                    cubePos.getX() - (double) pickupRadius - 0.5d,
+                    cubePos.getY() - (double) pickupHeight - 0.5d,
+                    cubePos.getZ() - (double) pickupRadius - 0.5d,
+                    cubePos.getX() + (double) pickupRadius + 0.5d,
+                    cubePos.getY() + (double) pickupHeight + 0.5d,
+                    cubePos.getZ() + (double) pickupRadius + 0.5d
+            );
 
-        List<Entity> list = level.getEntities((Entity) null, pickupArea, this::isExperienceOrb);
+            List<Entity> list = level.getEntities((Entity) null, pickupArea, this::isExperienceOrb);
 
-        for (Entity e : list)
-        {
-            if (cubeTileEntity.getSpace() > 0) {
-                int amount = ((ExperienceOrbEntity)e).getValue();
-                cubeTileEntity.fill(amount);
-                e.remove();
+            for (Entity e : list) {
+                if (cubeTileEntity.getSpace() > 0) {
+                    int amount = ((ExperienceOrbEntity) e).getValue();
+                    cubeTileEntity.fill(amount);
+                    e.remove();
+                }
             }
         }
 
@@ -128,6 +136,12 @@ public abstract class XPiggyBankTileEntityBase extends TileEntity implements ITi
         BlockState blockState = this.level.getBlockState(this.worldPosition);
         if (blockState.getValue(BlockStateProperties.LIT) != tank.getXpAmount() > 0) {
             this.level.setBlock(this.worldPosition, blockState.setValue(BlockStateProperties.LIT, tank.getXpAmount() > 0),
+                    Constants.BlockFlags.NOTIFY_NEIGHBORS + Constants.BlockFlags.BLOCK_UPDATE);
+        }
+
+        // set enabled state to true if pickup is active, or set to false if pickup is off
+        if (blockState.getValue(BlockStateProperties.ENABLED) != this.pickupActive) {
+            this.level.setBlock(this.worldPosition, blockState.setValue(BlockStateProperties.ENABLED, this.pickupActive),
                     Constants.BlockFlags.NOTIFY_NEIGHBORS + Constants.BlockFlags.BLOCK_UPDATE);
         }
     }
@@ -194,6 +208,11 @@ public abstract class XPiggyBankTileEntityBase extends TileEntity implements ITi
 
         tank.readFromNBT(tag);
         ticker = tag.getInt("ticker");
+        ticksPerCheck = tag.getInt("ticksPerCheck");
+        pickupRadius = tag.getInt("pickupRadius");
+        pickupHeight = tag.getInt("pickupHeight");
+        pickupEnabled = tag.getBoolean("pickupEnabled");
+        pickupActive = tag.getBoolean("pickupActive");
     }
 
     @Override
@@ -202,6 +221,11 @@ public abstract class XPiggyBankTileEntityBase extends TileEntity implements ITi
 
         tank.writeToNBT(tag);
         tag.putInt("ticker", ticker);
+        tag.putInt("ticksPerCheck", ticksPerCheck);
+        tag.putInt("pickupRadius", pickupRadius);
+        tag.putInt("pickupHeight", pickupHeight);
+        tag.putBoolean("pickupEnabled", pickupEnabled);
+        tag.putBoolean("pickupActive", pickupActive);
 
         return tag;
     }
@@ -296,7 +320,10 @@ public abstract class XPiggyBankTileEntityBase extends TileEntity implements ITi
     public void nextOutputFluid() {
         ResourceLocation outputFluidId = tank.getOutputFluidId();
         XPiggyBankFluid[] fluids = new XPiggyBankFluid[0];
-        fluids = XPiggyBankFluidRegistry.getInstance().getXPiggyBankFluids().toArray(fluids);
+        fluids = XPiggyBankFluidRegistry.getInstance().getXPiggyBankFluids()
+                .stream().filter((f) -> f.getDirection() == XPiggyBankDirection.BOTH || f.getDirection() == XPiggyBankDirection.OUTPUT)
+                .collect(Collectors.toList())
+                .toArray(fluids);
 
         int currentIndex = -1;
         for (int i = 0; i < fluids.length; i++)
@@ -320,7 +347,10 @@ public abstract class XPiggyBankTileEntityBase extends TileEntity implements ITi
     public void prevOutputFluid() {
         ResourceLocation outputFluidId = tank.getOutputFluidId();
         XPiggyBankFluid[] fluids = new XPiggyBankFluid[0];
-        fluids = XPiggyBankFluidRegistry.getInstance().getXPiggyBankFluids().toArray(fluids);
+        fluids = XPiggyBankFluidRegistry.getInstance().getXPiggyBankFluids()
+                .stream().filter((f) -> f.getDirection() == XPiggyBankDirection.BOTH || f.getDirection() == XPiggyBankDirection.OUTPUT)
+                .collect(Collectors.toList())
+                .toArray(fluids);
 
         int currentIndex = -1;
         for (int i = 0; i < fluids.length; i++)
@@ -339,5 +369,14 @@ public abstract class XPiggyBankTileEntityBase extends TileEntity implements ITi
             prev = fluids[fluids.length-1];
 
         tank.setOutputFluidId(prev.getId());
+    }
+
+    public void setPickupActive(boolean pickupActive) {
+        this.pickupActive = pickupActive;
+        setChanged();
+    }
+
+    public boolean getPickupActive() {
+        return this.pickupActive;
     }
 }

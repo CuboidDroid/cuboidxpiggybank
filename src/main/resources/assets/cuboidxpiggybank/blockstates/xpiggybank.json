@@ -1,12 +1,21 @@
 {
     "variants": {
-        "facing=north,lit=false": { "model": "cuboidxpiggybank:block/xpiggybank", "y": 180 },
-        "facing=east,lit=false": { "model": "cuboidxpiggybank:block/xpiggybank", "y": 270 },
-        "facing=south,lit=false": { "model": "cuboidxpiggybank:block/xpiggybank" },
-        "facing=west,lit=false": { "model": "cuboidxpiggybank:block/xpiggybank", "y": 90 },
-        "facing=north,lit=true": { "model": "cuboidxpiggybank:block/xpiggybank_lit", "y": 180 },
-        "facing=east,lit=true": { "model": "cuboidxpiggybank:block/xpiggybank_lit", "y": 270 },
-        "facing=south,lit=true": { "model": "cuboidxpiggybank:block/xpiggybank_lit" },
-        "facing=west,lit=true": { "model": "cuboidxpiggybank:block/xpiggybank_lit", "y": 90 }
+        "facing=north,lit=false,enabled=false": { "model": "cuboidxpiggybank:block/xpiggybank", "y": 180 },
+        "facing=east,lit=false,enabled=false": { "model": "cuboidxpiggybank:block/xpiggybank", "y": 270 },
+        "facing=south,lit=false,enabled=false": { "model": "cuboidxpiggybank:block/xpiggybank" },
+        "facing=west,lit=false,enabled=false": { "model": "cuboidxpiggybank:block/xpiggybank", "y": 90 },
+        "facing=north,lit=true,enabled=false": { "model": "cuboidxpiggybank:block/xpiggybank_lit", "y": 180 },
+        "facing=east,lit=true,enabled=false": { "model": "cuboidxpiggybank:block/xpiggybank_lit", "y": 270 },
+        "facing=south,lit=true,enabled=false": { "model": "cuboidxpiggybank:block/xpiggybank_lit" },
+        "facing=west,lit=true,enabled=false": { "model": "cuboidxpiggybank:block/xpiggybank_lit", "y": 90 },
+
+        "facing=north,lit=false,enabled=true": { "model": "cuboidxpiggybank:block/xpiggybank_active", "y": 180 },
+        "facing=east,lit=false,enabled=true": { "model": "cuboidxpiggybank:block/xpiggybank_active", "y": 270 },
+        "facing=south,lit=false,enabled=true": { "model": "cuboidxpiggybank:block/xpiggybank_active" },
+        "facing=west,lit=false,enabled=true": { "model": "cuboidxpiggybank:block/xpiggybank_active", "y": 90 },
+        "facing=north,lit=true,enabled=true": { "model": "cuboidxpiggybank:block/xpiggybank_lit_active", "y": 180 },
+        "facing=east,lit=true,enabled=true": { "model": "cuboidxpiggybank:block/xpiggybank_lit_active", "y": 270 },
+        "facing=south,lit=true,enabled=true": { "model": "cuboidxpiggybank:block/xpiggybank_lit_active" },
+        "facing=west,lit=true,enabled=true": { "model": "cuboidxpiggybank:block/xpiggybank_lit_active", "y": 90 }
     }
 }

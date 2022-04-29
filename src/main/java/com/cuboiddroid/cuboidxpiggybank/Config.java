@@ -15,9 +15,9 @@ public class Config {
 
     public static ForgeConfigSpec.IntValue ticksPerCheck;
     public static ForgeConfigSpec.IntValue pickupRadius;
+    public static ForgeConfigSpec.BooleanValue pickupEnabled;
     public static ForgeConfigSpec.IntValue internalTankSize;
     public static ForgeConfigSpec.ConfigValue<? extends String> fluidTypes;
-    public static ForgeConfigSpec.ConfigValue<? extends String> defaultFluidType;
 
     // --- JEI CATEGORY ---
     public static final String CATEGORY_JEI = "jei";
@@ -57,6 +57,12 @@ public class Config {
                         " Default: 10 (1/2 a second)")
                 .defineInRange("ticks_per_check", 10, 1, 1200);
 
+        pickupEnabled = COMMON_BUILDER
+                .comment(" Whether the pickup of XP orbs in the area is enabled. If set to false, then \n" +
+                        " the XPiggy Bank can only be used as a tank for converting fluids and storing XP\n" +
+                        " through the GUI.")
+                .define("pickup_enabled", true);
+
         pickupRadius = COMMON_BUILDER
                 .comment(" The radius around the XPiggy Bank to collect free-floating experience orbs.\n" +
                         " e.g. a radius of 0 would mean a 1x1 area, a radius of 1 would be 3x3, a radius of 2 would be 5x5, etc.\n" +
@@ -83,19 +89,16 @@ public class Config {
                 .defineInRange("internalTankSize", 20000000, 16000, 2147483000);
 
         fluidTypes = COMMON_BUILDER
-                .comment(" A semi-colon separated list of additional fluid types and their relative rate of conversion from 1000mb to XP.\n" +
+                .comment(" A semi-colon separated list of additional fluid types, their rate of conversion from 1000 mB to XP, \n" +
+                        " and whether the fluid can be input, output or both.\n\n" +
                         " For example:\n" +
-                        "   sophisticatedbackpacks:xp_still=1000;industrialforegoing:essence=100;cofh_core:experience=1000\n" +
+                        "   sophisticatedbackpacks:xp_still=1000:IO;industrialforegoing:essence=100:I;cofh_core:experience=1000:IO;minecraft:water=10:O\n" +
                         " This example would mean that: \n" +
-                        "   - every 1000mb of Sophisticated Backpack's XP would be equivalent to 1000XP (1:1 conversion)\n" +
-                        "   - every 1000mb of Industrial Foregoing's Essence would be equivalent to 100XP (10:1 conversion)\n" +
-                        "   - every 1000mb of COFH Core's Experience would be equivalent to 1000XP (1:1 conversion)")
-                .define("fluids", "sophisticatedbackpacks:xp_still=1000;industrialforegoing:essence=100;cofh_core:experience=1000");
-
-        defaultFluidType = COMMON_BUILDER
-                .comment(" The default fluid type to show in the XPiggy Bank. This MUST be one of the compatible fluids, or be the default of 'cuboidxpiggybank:liquid_xp'.\n\n" +
-                        " e.g. industrialforegoing:essence\n")
-                .define("default_fluid", "cuboidxpiggybank:liquid_xp");
+                        "   - every 1000mb of Sophisticated Backpack's XP would be equivalent to 1000XP (1:1 conversion) and can be input or output\n" +
+                        "   - every 1000mb of Industrial Foregoing's Essence would be equivalent to 100XP (10:1 conversion) but can only be input\n" +
+                        "   - every 1000mb of COFH Core's Experience would be equivalent to 1000XP (1:1 conversion) and can be input or output\n" +
+                        "   - every 1000mb of water would be equivalent to 10XP (100:1 conversion) but can only be output")
+                .define("fluids", "sophisticatedbackpacks:xp_still=1000:IO;industrialforegoing:essence=100:IO;cofh_core:experience=1000:IO");
     }
 
     private static void setupJEIConfig(ForgeConfigSpec.Builder COMMON_BUILDER) {

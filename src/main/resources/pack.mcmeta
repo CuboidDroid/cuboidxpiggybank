@@ -1,0 +1,7 @@
+{
+    "pack": {
+        "description": "Experience Cube resources",
+        "pack_format": 6,
+        "_comment": "Resources needed by CuboidDroid's Experience Cube mod"
+    }
+}

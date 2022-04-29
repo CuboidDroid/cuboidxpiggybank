@@ -1,0 +1,33 @@
+# config for CuboidDroid's XPiggy Bank
+modLoader="javafml"
+loaderVersion="[36,)"
+license="MIT"
+[[mods]]
+modId="cuboidxpiggybank" #mandatory
+version="${file.jarVersion}"
+displayName="XPiggy Bank"
+logoFile="logo.png"
+credits="Thanks for this XPiggy Bank mod goes to all the people with more experience than me." #optional
+authors="CuboidDroid" #optional
+description='''
+This is a simple one-block mod that adds the XPiggy Bank, which:
+ - is a simple tank for storing Experience / Essence / similar fluids
+ - can be switched between supported fluid types at will
+ - allows players to store their own XP / levels
+ - allows players to retrieve XP / levels
+ - allows any compatible fluid to be piped in and automatically converted to the Cube's configured fluid type
+ - allows the configured fluid to be piped out
+ - is cute.
+'''
+[[dependencies.cuboidxpiggybank]]
+    modId="forge" #mandatory
+    mandatory=true #mandatory
+    versionRange="[36,)" #mandatory
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.cuboidxpiggybank]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.16.5,1.17)"
+    ordering="NONE"
+    side="BOTH"

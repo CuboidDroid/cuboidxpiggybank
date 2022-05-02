@@ -1,5 +1,6 @@
 package com.cuboiddroid.cuboidxpiggybank.modules.xpiggybank.tile;
 
+import com.cuboiddroid.cuboidxpiggybank.Config;
 import com.cuboiddroid.cuboidxpiggybank.modules.xpiggybank.registry.XPiggyBankFluidRegistry;
 import com.cuboiddroid.cuboidxpiggybank.modules.xpiggybank.registry.XPiggyBankFluid;
 import com.cuboiddroid.cuboidxpiggybank.setup.ModFluids;
@@ -151,10 +152,21 @@ public class XPiggyBankTank implements IFluidHandler, IFluidTank {
 
             int availableSpaceForResource = internalToOutputAmount(capacity - fluid.getAmount(), rate);
 
-            return Math.min(availableSpaceForResource, resource.getAmount());
+            int amountToTransfer = Config.onlyAcceptMultiples.get()
+                    ? (resource.getAmount() / (1000 / rate)) * (1000 / rate)
+                    : resource.getAmount();
+
+            return Math.min(availableSpaceForResource, amountToTransfer);
         }
 
-        int rateAmount = outputToInternalAmount(resource.getAmount(), rate);
+        int rateAmount = Config.onlyAcceptMultiples.get()
+                ? (resource.getAmount() / (1000 / rate)) * (1000 / rate)
+                : resource.getAmount();
+
+        if (rateAmount == 0)
+            return 0;
+
+        rateAmount = outputToInternalAmount(rateAmount, rate);
 
         if (fluid.isEmpty())
         {

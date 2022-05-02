@@ -4,7 +4,8 @@ Welcome!
 
 ## Using the mod
 
-This is a simple mod for dealing with XP in bulk. It adds a single block, the XPiggy Bank, which is where you can:
+This is a simple mod for dealing with XP in bulk. It adds a single block, the 
+XPiggy Bank, which is where you can:
 
 - Store your XP as Liquid Experience or any of the configured compatible fluids
 - Retrieve XP
@@ -22,12 +23,25 @@ be piped out of the XPiggy Bank.
 
 Mod configuration options include:
 
-- Compatible fluids and their conversion rates. This allows things like:
-    - only using the single Liquid Experience added by this mod
-    - specifying different rates of conversion for "Experience Fluids" added by other mods. For example, CoFH's Experience might be a 1:1 conversion, but Industrial Foregoing's Essence could be configured at 100:1 since it's easier to obtain.
+- Compatible fluids, their conversion rates, and whether or not they can be inputs or 
+  outputs. This allows things like:
+    - only using the single Liquid Experience added by this mod (where 1mB = 1XP)
+    - specifying different rates of conversion for "Experience Fluids" added by other 
+      mods. For example, CoFH/Thermal's "Essence of Knowledge", Cyclic's "Experience",
+      and Sophisticated Backpack's "Experience" are 20mB = 1XP, so this can be specified 
+      for auto conversion at those rates. Similarly, Industrial Foregoing's "Essence" 
+      could be configured as 100mB = 1XP (or whatever suits your pack).
+    - Allowing some fluids to be input only - for example, your pack might have a 
+      mechanic where ether gas can be "traded in" for experience.
+    - Allowing some fluids to be output only - for example, your pack might make it
+      an option to export lava in exchange for stored XP.
 - The radius of the XP collection (the default covers a 9x9 area)
 - Change the number ticks between collections (defaults to every 10 ticks, or twice a second)
-- Set the internal tank size. The default is a whopping 20 million mB (20 thousand buckets of Liquid Experience - or about 2125 levels!)
-- Disable/Enabled the XP Orb pickup function (defaults to enabled).
+- Set the internal tank size. The default is a whopping 20 million mB (20 thousand buckets of 
+  Liquid Experience - or about 2125 levels!)
+- Disable/Enable the XP Orb pickup function (defaults to enabled).
 
-The config is found in `config/cuboiddroid/xpiggybank/xpiggybank.toml`. The settings are all explained in that file.
+The config is found in `config/cuboiddroid/xpiggybank/xpiggybank.toml`. The settings are all
+explained in that file, but if you need additional assistance, please don't hesitate to
+reach out to me on my [Discord](https://discord.gg/j9zWKFuBtU) and I'll see what I can do 
+about helping out.

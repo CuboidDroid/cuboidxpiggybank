@@ -3,10 +3,7 @@ package com.cuboiddroid.cuboidxpiggybank.datagen;
 import com.cuboiddroid.cuboidxpiggybank.XPiggyBankMod;
 import com.cuboiddroid.cuboidxpiggybank.datagen.client.ModBlockStateProvider;
 import com.cuboiddroid.cuboidxpiggybank.datagen.client.ModItemModelProvider;
-import com.cuboiddroid.cuboidxpiggybank.datagen.server.ModBlockTagsProvider;
-import com.cuboiddroid.cuboidxpiggybank.datagen.server.ModItemTagsProvider;
-import com.cuboiddroid.cuboidxpiggybank.datagen.server.ModLootTableProvider;
-import com.cuboiddroid.cuboidxpiggybank.datagen.server.ModRecipeProvider;
+import com.cuboiddroid.cuboidxpiggybank.datagen.server.*;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -31,9 +28,11 @@ public class DataGenerators {
             ModBlockTagsProvider blockTags = new ModBlockTagsProvider(gen, existingFileHelper);
             gen.addProvider(blockTags);
             gen.addProvider(new ModItemTagsProvider(gen, blockTags, existingFileHelper));
+            gen.addProvider(new ModFluidTagsProvider(gen, existingFileHelper));
 
             gen.addProvider(new ModLootTableProvider(gen));
             gen.addProvider(new ModRecipeProvider(gen));
+
         }
     }
 }

@@ -14,12 +14,13 @@ public class XPiggyBankDataGenRecipes {
     {
         // default shaped recipe for making the XPiggy Bank
         ShapedRecipeBuilder.shaped(ModBlocks.XPIGGYBANK.get())
-                .define('E', Items.EMERALD)
+                .define('E', Items.EMERALD_BLOCK)
                 .define('D', Items.DIAMOND)
-                .define('G', Items.GLOWSTONE)
-                .pattern("EDE")
-                .pattern("DGD")
-                .pattern("EDE")
+                .define('B', Items.BUCKET)
+                .define('P', Items.ENDER_PEARL)
+                .pattern("DBD")
+                .pattern("BEB")
+                .pattern("DPD")
                 .unlockedBy("has_item", provider.hasItem(Items.GLOWSTONE))
                 .save(consumer, XPiggyBankMod.getModId("xpiggybank"));
     }
